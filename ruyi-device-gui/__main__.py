@@ -19,6 +19,12 @@ class RuyiGui(QWidget):
         self.ruyi = ruyi
         self.initUI()
 
+    def closeEvent(self, event):
+        if self.process.state() == QProcess.ProcessState.Running:
+            self.process.kill()
+            logging.debug("kill ruyi")
+        event.accept()
+
     def initUI(self):
         # 窗口
         self.setWindowTitle('ruyi device provision 公众科学日演示程序 [ by 樱风之狐 from 第三测试小队 ]')
