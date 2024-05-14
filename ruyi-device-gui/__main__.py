@@ -22,7 +22,7 @@ class RuyiGui(QWidget):
     def closeEvent(self, event):
         if self.process.state() == QProcess.ProcessState.Running:
             self.process.kill()
-            logging.debug("kill ruyi")
+            logging.debug("Kill ruyi")
         event.accept()
 
     def initUI(self):
@@ -186,6 +186,7 @@ class RuyiGui(QWidget):
         self.inputLineEdit.setEnabled(False)
         self.sendButton.setEnabled(False)
         self.restartButton.setEnabled(False)
+        self.inputLineEdit.textChanged.connect(self.onInputChange)
         self.sendButton.clicked.connect(self.sendInput)
         self.restartButton.clicked.connect(self.endRuyi)
         inputLayout.addWidget(self.inputLineEdit)
@@ -217,6 +218,7 @@ class RuyiGui(QWidget):
         self.ruyiOutEdit.append("$ {} device provision\n".format(self.ruyi))
         self.process.start(self.ruyi, ['device', 'provision'])
         self.runButton.setEnabled(False)
+        self.inputLineEdit.clear()
         self.inputLineEdit.setEnabled(True)
         self.sendButton.setEnabled(True)
         self.restartButton.setEnabled(True)
@@ -309,6 +311,12 @@ class RuyiGui(QWidget):
         self.flashCombos[self.ruyiStep].setEnabled(False)
         self.flashButtons[self.ruyiStep].setEnabled(False)
         self.ruyiStep += 1
+
+    def onInputChange(self):
+        if len(self.inputLineEdit.text()) > 46:
+            QMessageBox.critical(self, "啊啊啊", "啊啊啊别乱输入啊搞坏了怎么办啊", QMessageBox.StandardButton.Ok)
+            self.inputLineEdit.setEnabled(False)
+            self.sendButton.setEnabled(False)
 
     def onReadyRead(self):
         # 处理输出
