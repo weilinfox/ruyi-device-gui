@@ -379,8 +379,10 @@ class RuyiGui(QWidget):
                                                   QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Abort)
                 else:
                     self.noteLabel.setText("这个镜像并不是用来直接向磁盘 dd 的\n"
-                                           "这是一个借助其他工具写入设备的镜像")
-                    ret = QMessageBox.information(self, "确认磁盘刷写", "确认设备刷写？该操作将永久擦除该设备的已有数据",
+                                           "这是一个借助其他工具写入设备的镜像\n"
+                                           "此时检查一下设备是否已经连接")
+                    ret = QMessageBox.information(self, "确认磁盘刷写", "确认进行设备刷写？该操作将永久擦除该设备上的已有数据\n"
+                                                                        "请同时确认设备已经被正确地连接在计算机上",
                                                   QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Abort)
                 self.sendFlashing(ret == QMessageBox.StandardButton.Ok)
             elif re.match(r"Do you want to retry the command with.*sudo.*\? \(y/N\)", sl.strip()):
@@ -402,7 +404,7 @@ class RuyiGui(QWidget):
                                               "fastboot devices 命令的输出如下：\n" + output + "\n是否继续？",
                                               QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Abort)
                 if ret == QMessageBox.StandardButton.Ok:
-                    self.noteLabel.setText("开始设备刷写...")
+                    self.noteLabel.setText("进行设备刷写...")
                 self.sendFlashing(ret == QMessageBox.StandardButton.Ok)
             elif sl.strip() == "It seems the flashing has finished without errors.":
                 self.ruyiItems.clear()
