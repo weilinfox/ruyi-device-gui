@@ -7,9 +7,9 @@ import os
 import re
 import sys
 
-from PySide6.QtCore import QProcess, Qt
-from PySide6.QtGui import QIcon, QTextCursor
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QComboBox,  QHBoxLayout, QLabel, QLineEdit, QMessageBox,
+from PySide2.QtCore import QProcess, Qt
+from PySide2.QtGui import QIcon, QTextCursor
+from PySide2.QtWidgets import (QApplication, QButtonGroup, QComboBox,  QHBoxLayout, QLabel, QLineEdit, QMessageBox,
                                QPushButton, QRadioButton, QTextEdit, QVBoxLayout, QWidget)
 
 
