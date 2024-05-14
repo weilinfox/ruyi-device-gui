@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-# c 2017-2024 桜風の狐 at 白玉楼製作所
-# caiweilin@iscas.ac.cn
+# Copyright 2017-2024 白玉楼製作所 <sakurakaze@gensokyo.ac.cn>
+# Copyright 2023-2024 桜風の狐 <caiweilin@iscas.ac.cn>
 
 import logging
 import os
 import re
 import sys
 
-from PySide6.QtCore import QProcess
+from PySide6.QtCore import QProcess, Qt
 from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QComboBox,  QHBoxLayout, QLineEdit, QMessageBox, QPushButton,
                                QRadioButton, QTextEdit, QVBoxLayout, QWidget)
@@ -22,22 +22,32 @@ class RuyiGui(QWidget):
     def initUI(self):
         # 窗口
         self.setWindowTitle('ruyi device provision 演示程序 [ by 桜風の狐 at 白玉楼製作所 ]')
-        self.setGeometry(100, 100, 800, 400)
+        self.setGeometry(100, 100, 1000, 600)
+        self.setMinimumSize(self.width(), self.height())
+        self.setMaximumSize(self.width(), self.height())
+        self.setFixedSize(self.width(), self.height())
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
 
         mainLayout = QHBoxLayout()
 
         # 左部区域 显示输出
         self.textEdit = QTextEdit()
+        self.textEdit.setFixedWidth(600)
+        # self.textEdit.setAcceptRichText(True)
+        self.textEdit.setReadOnly(True)
         self.textEdit.setLineWrapMode(self.textEdit.LineWrapMode.NoWrap)
         mainLayout.addWidget(self.textEdit)
 
         # 右部区域 用户控制
         userLayout = QVBoxLayout()
+        userLayout.setContentsMargins(5, 0, 0, 0)
         self.runButton = QPushButton('运行 ruyi device provision')
+        self.runButton.setFixedHeight(60)
         self.runButton.clicked.connect(self.runCommand)
 
         # Continue
         continueLayout = QHBoxLayout()
+        continueLayout.setContentsMargins(60, 0, 0, 0)
         self.continueCheck = QButtonGroup()
         self.continueCheckYes = QRadioButton("是")
         self.continueCheckNo = QRadioButton("否")
@@ -46,6 +56,7 @@ class RuyiGui(QWidget):
         self.continueCheck.addButton(self.continueCheckYes, 1)
         self.continueCheck.addButton(self.continueCheckNo, 0)
         self.continueButtom = QPushButton("继续")
+        self.continueButtom.setFixedHeight(36)
         self.continueButtom.setEnabled(False)
         self.continueButtom.clicked.connect(self.sendContinue)
         continueLayout.addWidget(self.continueCheckYes)
@@ -61,6 +72,9 @@ class RuyiGui(QWidget):
         boardCombo.setEnabled(False)
         boardButton.setEnabled(False)
         boardButton.clicked.connect(self.sendNextStep)
+        boardCombo.setFixedWidth(280)
+        boardCombo.setFixedHeight(36)
+        boardButton.setFixedHeight(36)
         self.flashCombos.append(boardCombo)
         self.flashButtons.append(boardButton)
         boardLayout.addWidget(boardCombo)
@@ -73,6 +87,9 @@ class RuyiGui(QWidget):
         variantCombo.setEnabled(False)
         variantButton.setEnabled(False)
         variantButton.clicked.connect(self.sendNextStep)
+        variantCombo.setFixedWidth(280)
+        variantCombo.setFixedHeight(36)
+        variantButton.setFixedHeight(36)
         self.flashCombos.append(variantCombo)
         self.flashButtons.append(variantButton)
         variantLayout.addWidget(variantCombo)
@@ -85,6 +102,9 @@ class RuyiGui(QWidget):
         mirrorCombo.setEnabled(False)
         mirrorButton.setEnabled(False)
         mirrorButton.clicked.connect(self.sendNextStep)
+        mirrorCombo.setFixedWidth(280)
+        mirrorCombo.setFixedHeight(36)
+        mirrorButton.setFixedHeight(36)
         self.flashCombos.append(mirrorCombo)
         self.flashButtons.append(mirrorButton)
         mirrorLayout.addWidget(mirrorCombo)
@@ -97,6 +117,9 @@ class RuyiGui(QWidget):
         diskCombo.setEnabled(False)
         diskButton.setEnabled(False)
         diskButton.clicked.connect(self.sendDiskDevice)
+        diskCombo.setFixedWidth(280)
+        diskCombo.setFixedHeight(36)
+        diskButton.setFixedHeight(36)
         self.flashCombos.append(diskCombo)
         self.flashButtons.append(diskButton)
         diskLayout.addWidget(diskCombo)
@@ -104,6 +127,7 @@ class RuyiGui(QWidget):
 
         # Proceed
         proceedLayout = QHBoxLayout()
+        proceedLayout.setContentsMargins(60, 0, 0, 0)
         self.proceedCheck = QButtonGroup()
         self.proceedCheckYes = QRadioButton("是")
         self.proceedCheckNo = QRadioButton("否")
@@ -112,6 +136,7 @@ class RuyiGui(QWidget):
         self.proceedCheck.addButton(self.proceedCheckYes, 1)
         self.proceedCheck.addButton(self.proceedCheckNo, 0)
         self.proceedButtom = QPushButton("继续")
+        self.proceedButtom.setFixedHeight(36)
         self.proceedButtom.setEnabled(False)
         self.proceedButtom.clicked.connect(self.sendProceed)
         proceedLayout.addWidget(self.proceedCheckYes)
@@ -122,8 +147,11 @@ class RuyiGui(QWidget):
         inputLayout = QHBoxLayout()
         self.inputLineEdit = QLineEdit()
         self.inputLineEdit.setPlaceholderText("手动输入")
+        self.inputLineEdit.setFixedWidth(280)
+        self.inputLineEdit.setFixedHeight(36)
         self.sendButton = QPushButton('发送')
-        self.restartButton = QPushButton('关闭 ruyi device provision')
+        self.restartButton = QPushButton('结束 ruyi device provision')
+        self.restartButton.setFixedHeight(60)
         self.inputLineEdit.setEnabled(False)
         self.sendButton.setEnabled(False)
         self.restartButton.setEnabled(False)
@@ -275,7 +303,8 @@ class RuyiGui(QWidget):
                 break
             elif sl.strip() == "Please give the path for the target's whole disk:":
                 self.ruyiItems.clear()
-                output = os.popen('lsblk --ascii --paths --tree=NAME --noheadings --output NAME,TYPE,MOUNTPOINTS').read()
+                output = (os.popen('lsblk --ascii --paths --tree=NAME --noheadings --output NAME,TYPE,MOUNTPOINTS')
+                          .read())
                 output = output.split("\n")
                 if len(output) < 2:
                     self.flashCombos[-1].addItem("Error executing lsblk")
@@ -301,6 +330,9 @@ class RuyiGui(QWidget):
                         self.flashButtons[-1].setEnabled(True)
                     else:
                         self.flashCombos[-1].addItem('No available disk found')
+                        QMessageBox.warning(self, "没有找到可供写入的磁盘",
+                                            "演示程序没有找到可供镜像写入的磁盘\n请检查磁盘是否插入，或选择手动指定",
+                                            QMessageBox.StandardButton.Ok)
             elif sl.strip() == "Proceed with flashing? (y/N)":
                 self.ruyiItems.clear()
                 diskName = self.flashCombos[-1].currentText()
