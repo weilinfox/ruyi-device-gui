@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Ruyi Device Gui
+GenericName=Web Browser
+GenericName[zh_CN]=ruyi device provision 演示程序
+GenericName[zh_TW]=ruyi device provision 演示程序
+Comment=ruyi device provision 演示
+Exec=ruyi-device-gui
+Icon=ruyi-device-gui
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development;
