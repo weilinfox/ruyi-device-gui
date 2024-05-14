@@ -8,7 +8,7 @@ import re
 import sys
 
 from PySide6.QtCore import QProcess, Qt
-from PySide6.QtGui import QTextCursor
+from PySide6.QtGui import QIcon, QTextCursor
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QComboBox,  QHBoxLayout, QLabel, QLineEdit, QMessageBox,
                                QPushButton, QRadioButton, QTextEdit, QVBoxLayout, QWidget)
 
@@ -33,6 +33,9 @@ class RuyiGui(QWidget):
         self.setMaximumSize(self.width(), self.height())
         self.setFixedSize(self.width(), self.height())
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
+
+        self.icon = QIcon.fromTheme("ruyi-device-gui")
+        self.setWindowIcon(self.icon)
 
         mainLayout = QHBoxLayout()
 
