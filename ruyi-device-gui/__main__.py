@@ -273,7 +273,7 @@ class RuyiGui(QWidget):
         self.proceedCheckNo.setEnabled(False)
         self.proceedCheckYes.setEnabled(False)
         self.proceedButtom.setEnabled(False)
-        self.noteLabel.setText("正在下载...\n可以喝杯咖啡或者出去溜达一下 :D")
+        self.noteLabel.setText("正在下载和解包镜像...\n可以喝杯咖啡或者出去溜达一下 :D")
 
     def sendFlashing(self, send):
         if send:
@@ -401,6 +401,8 @@ class RuyiGui(QWidget):
                 ret = QMessageBox.information(self, "确认 fastboot 输出",
                                               "fastboot devices 命令的输出如下：\n" + output + "\n是否继续？",
                                               QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Abort)
+                if ret == QMessageBox.StandardButton.Ok:
+                    self.noteLabel.setText("开始设备刷写...")
                 self.sendFlashing(ret == QMessageBox.StandardButton.Ok)
             elif sl.strip() == "It seems the flashing has finished without errors.":
                 self.ruyiItems.clear()
