@@ -314,9 +314,9 @@ class RuyiGui(QWidget):
 
     def onInputChange(self):
         if len(self.inputLineEdit.text()) > 46:
-            QMessageBox.critical(self, "啊啊啊", "啊啊啊别乱输入啊搞坏了怎么办啊", QMessageBox.StandardButton.Ok)
             self.inputLineEdit.setEnabled(False)
             self.sendButton.setEnabled(False)
+            QMessageBox.critical(self, "啊啊啊", "啊啊啊别乱输入啊搞坏了怎么办啊", QMessageBox.StandardButton.Ok)
 
     def onReadyRead(self):
         # 处理输出
